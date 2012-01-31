@@ -125,6 +125,7 @@ class VimChatScope:
 
         vim.command('redir! > ~/.vimchat/vimchat.debug')
         vim.command('nnoremap <buffer> B :py VimChat.toggleBuddyList()<CR>')
+        vim.command('nnoremap <buffer> И :py VimChat.toggleBuddyList()<CR>')
         vim.command('let s:hasVars = VimChatCheckVars()')
         self.setupLeaderMappings()
         hasVars = int(vim.eval('s:hasVars'))
@@ -981,12 +982,17 @@ class VimChatScope:
         nmap <buffer> <silent> <CR> :py VimChat.beginChatFromBuddyList()<CR>
         nnoremap <buffer> <silent> <Leader>l :py VimChat.openLogFromBuddyList()<CR>
         nnoremap <buffer> <silent> B :py VimChat.toggleBuddyList()<CR>
+        nnoremap <buffer> <silent> И :py VimChat.toggleBuddyList()<CR>
         nnoremap <buffer> <silent> q :py VimChat.toggleBuddyList()<CR>
+        nnoremap <buffer> <silent> й :py VimChat.toggleBuddyList()<CR>
         nnoremap <buffer> <silent> r :py VimChat.refreshBuddyList()<CR>
         nnoremap <buffer> <silent> R :py VimChat.refreshBuddyList()<CR>
         nnoremap <buffer> <silent> <Leader>n /{{{ (<CR>
+        nnoremap <buffer> <silent> <Leader>т /{{{ (<CR>
         nnoremap <buffer> <silent> <Leader>c :py VimChat.openGroupChat()<CR>
+        nnoremap <buffer> <silent> <Leader>с :py VimChat.openGroupChat()<CR>
         nnoremap <buffer> <silent> <Leader>ss :py VimChat.setStatus()<CR>
+        nnoremap <buffer> <silent> <Leader>ыы :py VimChat.setStatus()<CR>
         nnoremap <buffer> <silent> <Space> :silent exec 'vertical resize ' . (winwidth('.') > g:vimchat_buddylistwidth ? (g:vimchat_buddylistwidth) : (g:vimchat_buddylistmaxwidth))<CR>
         """
         vim.command(commands)
@@ -1041,7 +1047,7 @@ class VimChatScope:
     def writeBuddyList(self):
         #write roster to file
         import codecs
-        rF = codecs.open(self.rosterFile,'w','utf-16')
+        rF = codecs.open(self.rosterFile,'w','utf-8')
 
         for curJid, account in self.accounts.items():
             if not account.isConnected():
@@ -1132,9 +1138,13 @@ class VimChatScope:
         setlocal foldmethod=marker
         nnoremap <buffer> <silent> i :py VimChat.sendBufferShow()<CR>
         nnoremap <buffer> <silent> o :py VimChat.sendBufferShow()<CR>
+        nnoremap <buffer> <silent> ш :py VimChat.sendBufferShow()<CR>
+        nnoremap <buffer> <silent> щ :py VimChat.sendBufferShow()<CR>
         nnoremap <buffer> <silent> a :py VimChat.sendBufferShow()<CR>
         nnoremap <buffer> <silent> B :py VimChat.toggleBuddyList()<CR>
+        nnoremap <buffer> <silent> И :py VimChat.toggleBuddyList()<CR>
         nnoremap <buffer> <silent> q :py VimChat.deleteChat()<CR>
+        nnoremap <buffer> <silent> й :py VimChat.deleteChat()<CR>
         au CursorMoved <buffer> exe 'py VimChat.clearNotify()'
         """
         vim.command(commands)
