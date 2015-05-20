@@ -55,7 +55,8 @@ try:
             import json
         except:
             pass
-except:
+except Exception as e:
+    print "error loading vimchat modules:", e
     vim.command('let g:vimchat_loaded = 1')
 
 pynotify_enabled = False
@@ -184,6 +185,8 @@ class VimChatScope:
                 self.statusIcon = self.StatusIcon()
                 self.statusIcon.start()
                 self.blinktimeout = int(vim.eval('g:vimchat_blinktimeout'))
+
+        self.toggleBuddyList()
 
     def stop(self):
         if self.statusIcon != None:
@@ -948,7 +951,7 @@ class VimChatScope:
         # 'tabpagebuflist(v:val)'), 'index(v:val, 4) == 0'))
 
         if not self.accounts:
-            print "Not Connected!  Please connect first."
+            print "Could not display buddy list. Type <leader>on to connect."
             return 0
 
         if self.buddyListBuffer:
@@ -1000,26 +1003,25 @@ class VimChatScope:
 
         self.buddyListBuffer = vim.current.buffer
 
-    def getBuddyListItem(self, item):
-        if item == 'jid':
-            vim.command("normal zo")
-            vim.command("normal ]z")
-            vim.command("normal [z")
-            vim.command("normal j")
+    def getBuddyListItem(self):
+        vim.command("normal zo")
+        vim.command("normal ]z")
+        vim.command("normal [z")
+        vim.command("normal j")
 
-            toJid = vim.current.line
-            toJid = toJid.strip()
+        toJid = vim.current.line
+        toJid = toJid.strip()
 
-            vim.command("normal zc")
-            vim.command("normal [z")
+        vim.command(r"call search('\V{{{ [+]', 'b')") 
 
-            account = str(vim.current.line).split(' ')[2]
-            return account, toJid
+        account = str(vim.current.line).split(' ')[2]
+        return account, toJid
 
     def beginChatFromBuddyList(self):
-        account, toJid = self.getBuddyListItem('jid')
+        account, toJid = self.getBuddyListItem()
         [jid,user,resource] = self.getJidParts(toJid)
 
+        print '**** beginning chat with account:', account
         buf = VimChat.beginChat(account, jid)
         if not buf:
             #print "Error getting buddy info: " + jid
@@ -1055,7 +1057,7 @@ class VimChatScope:
                     u"""
                     ******************************
                     ERROR: %s IS NOT CONNECTED!!!
-                    You can type \on to reconnect.
+                    You can type <leader>on to reconnect.
                     ******************************
                     """ % (curJid))
                 continue
@@ -1400,7 +1402,7 @@ class VimChatScope:
             log.close()
 
     def openLogFromBuddyList(self):
-        account, jid = VimChat.getBuddyListItem('jid')
+        account, jid = VimChat.getBuddyListItem()
         VimChat.openLog(account, jid)
 
     def openLogFromChat(self):
@@ -1746,6 +1748,5 @@ function! VimChatFoldText()
     let line=strpart('                                     ', 0, (v:foldlevel - 1)).substitute(line,'\s*{\+\s*', '', '')
     return line
 endfunction
-"}}}
 
-" vim:et:fdm=marker:sts=4:sw=4:ts=4
+" vim:et:sts=4:sw=4:ts=4
